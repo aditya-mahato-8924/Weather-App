@@ -18,6 +18,9 @@ import pycountry
 # for converting UNIX time to datetime object in order to display sunrise and sunset time
 from datetime import datetime, timedelta, timezone
 
+# for fetching api key in production
+import os
+
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 
@@ -58,7 +61,7 @@ def home():
     return render_template("index.html", title="Weather App", form=form, weather_data=weather_data, error=error if not status else None)
 
 def is_valid_city(city):
-    api = 'your api key here'
+    api = os.getenv("API_KEY")
     if not (is_country(city) or is_country_code(city)):
         try: 
             source = urllib.request.urlopen('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + api).read()
