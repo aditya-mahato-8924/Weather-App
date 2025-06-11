@@ -3,3 +3,4 @@ flask_wtf==1.2.2
 geopy==2.4.1
 pycountry==24.6.1
 WTForms==3.2.1
+gunicorn
