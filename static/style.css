@@ -71,7 +71,7 @@ main .container .input-city {
 main .container .input-city input {
     width: 72%;
     padding: 0.5rem;
-    font-size: 1.2rem;
+    font-size: 1rem;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     border-radius: 0.5rem;
 }
@@ -101,14 +101,36 @@ main .container .view-weather {
 
 }
 
-@media screen and (max-width: 600px) {
+.note {
+    width: 50%;
+    margin: 0 2rem;
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.note h2 {
+    font-size: 20px;
+    width: 100%
+}
+
+@media screen and (max-width: 900px) {
+    main {
+        width: 90%;
+        margin: 0 1rem;
+    }
+
     main .container .input-city {
         flex-direction: column;
     }
 
     main .container .input-city input {
         width: 100%;
-        font-size: 0.5rem;
+        font-size: 1rem;
+    }
+
+    main .container .input-city input[type="text"] {
+        font-size: 0.8rem;
     }
 
     main .container .input-city input[type="submit"] {

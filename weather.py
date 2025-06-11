@@ -1,4 +1,4 @@
-from flask import Flask, request, url_for, render_template
+from flask import Flask, request, render_template
 
 # load the form
 from forms import SearchForm
@@ -12,7 +12,10 @@ import urllib.request
 # for generating secret key
 import secrets
 
-# for converting country code to actual name
+# for fetching latitude and longitude of requested place
+from geopy.geocoders import Nominatim
+
+# for fetching country name based on country code
 import pycountry
 
 # for converting UNIX time to datetime object in order to display sunrise and sunset time
@@ -24,20 +27,19 @@ import os
 app = Flask(__name__)
 app.secret_key = secrets.token_hex(16)
 
+
 @app.route("/", methods=["GET", "POST"])
 def home():
     form = SearchForm()
-    weather_data = None
-    error = "city not found"
-    status = True
+    weather_data, error = None, None
 
     if request.method == "POST":
-        city = form.input_city.data.strip().replace(" ", '%20')
-        print(city)
+        place = form.input_city.data.strip()
+        print(place)
 
-        status, list_of_data = is_valid_city(city)
+        list_of_data = fetch_weather_data(place)
 
-        if status:
+        if list_of_data != "Requested Place data not found":
             sunrise_unix = list_of_data['sys']['sunrise']
             sunset_unix = list_of_data['sys']['sunset']
             timezone_offset = list_of_data['timezone']
@@ -46,53 +48,41 @@ def home():
 
             weather_data = {
                 "Country": pycountry.countries.get(alpha_2 = list_of_data['sys']['country']).name,
-                "Coordinate": str(list_of_data['coord']['lon']) + " " + str(list_of_data['coord']['lat']),
+                "Coordinate": str(list_of_data['coord']['lat']) + " " + str(list_of_data['coord']['lon']),
+                "Description": str(list_of_data['weather'][0]['description']).title(),
                 "Temperature": str(round(list_of_data['main']['temp'] - 273.15, 2)) + "\u00B0C",
                 "Pressure": str(list_of_data['main']['pressure']) + "hPa",
                 "Humidity": str(list_of_data['main']['humidity']) + "%",
+                "Visibility": str(float(list_of_data['visibility']) / 1000) + "Km",
+                "Wind Speed": str(list_of_data['wind']['speed']) + "m/s",
+                "Wind Direction": str(list_of_data['wind']['deg']) + "\u00B0",
                 "Sunrise": times[0],
                 "Sunset": times[1],
                 "Timezone" : str(find_timezone(list_of_data['timezone']))
             }
+        else:
+            error = list_of_data
 
-            print(weather_data)
+    return render_template("index.html", title="Weather App", form=form, weather_data=weather_data, error=error or None)
 
-
-    return render_template("index.html", title="Weather App", form=form, weather_data=weather_data, error=error if not status else None)
-
-def is_valid_city(city):
+def fetch_weather_data(place_name):
     api = os.getenv("API_KEY")
-    if not (is_country(city) or is_country_code(city)):
-        try: 
-            source = urllib.request.urlopen('http://api.openweathermap.org/data/2.5/weather?q=' + city + '&appid=' + api).read()
+    lat, lon = fetch_lat_lon(place_name)
+    try: 
+        source = urllib.request.urlopen(f'https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={api}').read()
+        data = json.loads(source)
+        return data
+    except Exception as e:
+        return "Requested Place data not found"
 
-            data = json.loads(source)
+def fetch_lat_lon(place_name):
+    geolocator = Nominatim(user_agent="my_geopy_app")
+    location = geolocator.geocode(place_name)
 
-            return (True, data) 
-        except Exception as e:
-            print(e)
-            return (False, None)
+    if location:
+        return (location.latitude, location.longitude)
     else:
-        return (False, None)
-
-def is_country(input_text):
-    for country in pycountry.countries:
-        if input_text.lower() == getattr(country, "name").lower():
-            return True
-        
-        if hasattr(country, "official_name") and getattr(country, "official_name").lower() == input_text.lower():
-            return True
-    
-    return False
-
-def is_country_code(input_text):
-    if pycountry.countries.get(alpha_2 = input_text):
-        return True
-    
-    if pycountry.countries.get(alpha_3 = input_text):
-        return True
-
-    return False
+        return None, None
 
 
 def find_timezone(timezone_offset):
