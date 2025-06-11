@@ -6,7 +6,7 @@ A simple and responsive weather web application built using **Flask** and the **
 
 ## 📸 Preview
 
-![weather-app-preview]((https://weather-app-v3fp.onrender.com/))
+![weather-app-preview](preview-image-url-if-any)](https://weather-app-v3fp.onrender.com/)
 
 ---
 
