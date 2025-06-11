@@ -12,14 +12,26 @@ A simple and responsive weather web application built using **Flask** and the **
 
 ## 🚀 Features
 
-- 🔍 Search by city name
-- 📍 Displays country, coordinates (lat/lon)
-- 🌡️ Current temperature in (°C)
-- 💧 Humidity (%)
-- 🧭 Pressure (hPa)
-- 🌅 Accurate sunrise and sunset with timezone-adjusted date and time
-- ❌ Input validation (rejects country names or codes like `India`, `IN`, `USA`)
-- 🌐 Responsive design for both mobile and desktop
+- 📍 **Flexible Location Search**  
+  Enter a city, state, country, or even a region (e.g., "Liluah", "Belur", "India") to get weather data.
+- 🗺️ **Displays country and coordinates** (latitude, longitude)
+- 🌡️ **Current Temperature** (°C)
+- 💧 **Humidity** (%)
+- 🧭 **Pressure** (hPa)
+- 🌬️ **Wind Speed & Direction** (in degrees from North)
+- 👁️ **Visibility Information** (in meters/km)
+- 🌅 **Accurate Sunrise and Sunset Time**  
+  Automatically adjusted to the location's timezone
+- ❌ **Input Validation** for blank or invalid locations
+- 🌐 **Responsive Design**  
+  Works seamlessly on both mobile and desktop
+
+---
+
+## ⚠️ Note
+
+> This app may not display accurate information or any data at all for  
+> **remote** or **less accessible** locations.
 
 ---
 
@@ -28,5 +40,3 @@ A simple and responsive weather web application built using **Flask** and the **
 - **Backend**: Python, Flask
 - **Frontend**: HTML, CSS, Bootstrap (optional)
 - **API**: [OpenWeatherMap API](https://openweathermap.org/api)
-
----
