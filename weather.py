@@ -35,7 +35,6 @@ def home():
 
     if request.method == "POST":
         place = form.input_city.data.strip()
-        print(place)
 
         list_of_data = fetch_weather_data(place)
 
@@ -92,8 +91,7 @@ def find_timezone(timezone_offset):
     if timezone_offset < 0:
         hours = -hours
         minutes = -minutes
-
-    print(timezone(timedelta(hours=hours, minutes=minutes)))
+        
     return timezone(timedelta(hours=hours, minutes=minutes))
 
 def extract_sunrise_sunset_time(sunrise_unix, sunset_unix, timezone_offset):
